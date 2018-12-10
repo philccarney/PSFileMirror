@@ -75,7 +75,7 @@ function Invoke-FileMirror
 
         if ($Files)
         {
-            Add-LogEntry "Files scraped from source ($Source)" -Log $Log
+            Add-LogEntry "Files ($($Files.Count)) scraped from source ($Source)" -Log $Log
         }
 
         #endregion Parameter-handling and Variables
@@ -154,6 +154,10 @@ function Invoke-FileMirror
                     catch
                     {
                         $PSCmdlet.ThrowTerminatingError($_)
+                    }
+                    finally
+                    {
+                        Add-LogEntry -Message "Processed: $File" -Log $Log
                     }
                 }
             }
