@@ -177,7 +177,7 @@ function Invoke-FileMirror
                                 if ($DestinationFileHash -ne $OriginalFileHash)
                                 {
                                     Write-Verbose -Message "Hash mismatch: $OriginalFileHash/$DestinationFileHash"
-                                    FileShouldBeCopied = $True
+                                    $FileShouldBeCopied = $True
                                 }
                                 else
                                 {
