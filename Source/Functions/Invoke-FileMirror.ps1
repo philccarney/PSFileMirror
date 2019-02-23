@@ -97,7 +97,7 @@ function Invoke-FileMirror
                         Write-Verbose -Message "Processing '$File'."
                         $ProposedPath = ($File.FullName).Replace($Path, $Target)
                         $ProposedParentDirectory = Split-Path -Path $ProposedPath -Parent
-                        if (Test-Path -LiteralPath -Path $ProposedPath)
+                        if (Test-Path -LiteralPath $ProposedPath)
                         {
                             $FileExistsInDestination = $True
                         }
