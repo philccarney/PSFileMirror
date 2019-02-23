@@ -62,6 +62,7 @@ function Invoke-FileMirror
             Recurse = $True
         }
 
+        Write-Verbose -Message "Scraping for files."
         if ($Extension)
         {
             $Files = Get-ChildItem @DirSplat -Include $Extension
@@ -94,8 +95,9 @@ function Invoke-FileMirror
                 {
                     try
                     {
-                        Write-Verbose -Message "Processing '$File'."
-                        $ProposedPath = ($File.FullName).Replace($Path, $Target)
+                        Write-Verbose -Message "Processing '$($File.FullName)'."
+                        $ProposedPath = ($File.FullName).Replace($Path, $Destination)
+                        Write-Verbose -Message "Proposed path: $ProposedPath"
                         $ProposedParentDirectory = Split-Path -Path $ProposedPath -Parent
                         if (Test-Path -LiteralPath $ProposedPath)
                         {
@@ -140,7 +142,7 @@ function Invoke-FileMirror
                     {
                         try
                         {
-                            if ($Null -ne $FileExistsInDestination)
+                            if ($FileExistsInDestination)
                             {
                                 # If Fast is specified, we don't care about checking hashes etc; only the existence of the file matters.
                                 Write-Verbose "File already exists in destination. No further action required."
@@ -152,11 +154,15 @@ function Invoke-FileMirror
                             $PSCmdlet.ThrowTerminatingError($_)
                             Break
                         }
+                        finally
+                        {
+                            $FilesProcessed ++
+                        }
                     }
                 }
                 else
                 {
-                    if ($Null -ne $FileExistsInDestination)
+                    if ($FileExistsInDestination)
                     {
                         if ($PSCmdlet.ShouldProcess($File.FullName, "Process file hashes for source and existing destination file"))
                         {
@@ -197,7 +203,7 @@ function Invoke-FileMirror
                 {
                     try
                     {
-                        if (($Null -ne $FileExistsInDestination) -or (FileShouldBeCopied))
+                        if ((-not ($FileExistsInDestination)) -or ($FileShouldBeCopied))
                         {
                             $FilesToTransfer ++
                             Write-Verbose -Message "Copying '$File' to '$ProposedPath'."
@@ -230,6 +236,10 @@ function Invoke-FileMirror
                                 }
                             }
                         }
+                        else
+                        {
+                            Write-Verbose -Message "Skipping file transfer."
+                        }
                     }
                     catch
                     {
@@ -248,10 +258,44 @@ function Invoke-FileMirror
     END
     {
         Write-Debug -Message "END Block"
-        $ElapsedTime = New-TimeSpan -Start $StartTime -End (Get-Date)
-        Add-LogEntry -Message "Elapsed time: $ElapsedTime" -Log $Log
-        Add-LogEntry -Message "Files processed: $FilesProcessed" -Log $Log
-        Add-LogEntry -Message "Files to transfer: $FilesToTransfer" -Log $Log
-        Add-LogEntry -Message "Files transferred successfully: $FilesTransferred" -Log $Log
+        if ($PSCmdlet.ShouldProcess($Log, "Output object and write summary to log"))
+        {
+            try
+            {
+                Write-Verbose -Message "Calculating elapsed time."
+                $ElapsedTime = New-TimeSpan -Start $StartTime -End (Get-Date)
+
+                Write-Verbose -Message "Calculating failed transfers."
+                if ($FilesToTransfer -gt 0)
+                {
+                    [int] $FailedTransfers = $FilesToTransfer - $FilesTransferred
+                }
+                else
+                {
+                    [int] $FailedTransfers = 0
+                }
+
+                Write-Verbose -Message "Building output object."
+                [PSCustomObject]@{
+                    FilesProcessed      = $FilesProcessed
+                    FilesToTransfer     = $FilesToTransfer
+                    SuccessfulTransfers = $FilesTransferred
+                    FailedTransfers     = $FailedTransfers
+                    ElapsedTime         = $ElapsedTime
+                }
+
+                Write-Verbose -Message "Writing summary to log."
+                Add-LogEntry -Message "Elapsed time: $ElapsedTime" -Log $Log
+                Add-LogEntry -Message "Files processed: $FilesProcessed" -Log $Log
+                Add-LogEntry -Message "Files to transfer: $FilesToTransfer" -Log $Log
+                Add-LogEntry -Message "Successful file transfers: $FilesTransferred" -Log $Log
+                Add-LogEntry -Message "Failed file transfers: $FailedTransfers" -Log $Log
+            }
+            catch
+            {
+                $PSCmdlet.ThrowTerminatingError($_)
+                Break
+            }
+        }
     }
 }
