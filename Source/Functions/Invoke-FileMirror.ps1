@@ -102,7 +102,7 @@ function Invoke-FileMirror
                     try
                     {
                         Write-Verbose -Message "Processing '$($File.FullName)'."
-                        $ProposedPath = ($File.FullName).Replace($Path, $Destination)
+                        $ProposedPath = Get-ProposedPath -Path $File.FullName -Source $Path -Destination $Destination
                         Write-Verbose -Message "Proposed path: $ProposedPath"
                         $ProposedParentDirectory = Split-Path -Path $ProposedPath -Parent
                         if (Test-Path -LiteralPath $ProposedPath)
