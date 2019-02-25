@@ -36,8 +36,8 @@ function Invoke-FileMirror
         [Parameter(Mandatory = $False, Position = 2)]
         [string] $Log,
 
-        [Parameter(Mandatory = $False, Position = 3, HelpMessage = "The extensions(s) which will be copied. The syntax for this is the same as Get-ChildItem's 'Include' parameter.")]
-        [string[]] $Extension,
+        <# [Parameter(Mandatory = $False, Position = 3, HelpMessage = "The extensions(s) which will be copied. The syntax for this is the same as Get-ChildItem's 'Include' parameter.")]
+        [string[]] $Extension, #>
 
         [Parameter(Mandatory = $False, Position = 4)]
         [switch] $Fast
