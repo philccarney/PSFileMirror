@@ -20,26 +20,26 @@ function Invoke-FileMirror
 .INPUTS
     Strings
 .OUTPUTS
-    TBC - Output from this cmdlet (if any)
+    PSCustomObject
 .NOTES
     Version 0.1.0
 #>
     [CmdletBinding(ConfirmImpact = 'Medium', SupportsShouldProcess = $True)]
     param
     (
-        [Parameter(Mandatory = $True, Position = 0)]
+        [Parameter(Mandatory = $True, Position = 0, HelpMessage = "The path to the file(s) to be copied")]
         [string] $Path,
 
-        [Parameter(Mandatory = $True, Position = 1)]
+        [Parameter(Mandatory = $True, Position = 1, HelpMessage = "The path to the root destination of the file(s)")]
         [string] $Destination,
 
-        [Parameter(Mandatory = $False, Position = 2)]
+        [Parameter(Mandatory = $False, Position = 2, HelpMessage = "The path to the file used to log the file operation(s)")]
         [string] $Log,
 
         <# [Parameter(Mandatory = $False, Position = 3, HelpMessage = "The extensions(s) which will be copied. The syntax for this is the same as Get-ChildItem's 'Include' parameter.")]
         [string[]] $Extension, #>
 
-        [Parameter(Mandatory = $False, Position = 4)]
+        [Parameter(Mandatory = $False, Position = 4, HelpMessage = "Indicates that hash-checking will be skipped for a 'Fast' completion")]
         [switch] $Fast
     )
 
