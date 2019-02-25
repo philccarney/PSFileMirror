@@ -1,5 +1,5 @@
-$ModuleName = "$((Split-Path -Path $PSScriptRoot) -split "\\" | Select-Object -Last 1).psd1"
-$ModuleManifestPath = Join-Path -Path $(Split-Path -Path $PSScriptRoot) -ChildPath $ModuleName
+$ModuleName = $(Split-Path -Path $PSScriptRoot) -split "\\" | Select-Object -Last 1
+$ModuleManifestPath = Join-Path -Path $(Split-Path -Path $PSScriptRoot) -ChildPath "$ModuleName.psd1"
 
 Describe "Module Manifest Tests" -Tag "Build" {
 
