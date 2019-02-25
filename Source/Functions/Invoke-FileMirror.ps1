@@ -2,27 +2,33 @@ function Invoke-FileMirror
 {
     <#
 .SYNOPSIS
-    TBC - Short description
+    Provides a simple file/directory mirroring solution in Powershell Core.
 .DESCRIPTION
-    TBC - Long description
+    Uses Powershell Core cmdlets to provide a simple file/directory mirroring solution including SHA256 hash-checking.
 .PARAMETER Path
-    TBC
+    The path to the file(s) or folder(s) to be copied.
 .PARAMETER Destination
-    TBC
+    The path to the destination of the copy operation. The file structure is kept intact.
 .PARAMETER Log
-    TBC
+    The path to the log file - this logs the file operation(s).
 .PARAMETER Extension
-    TBC
+    Used to specify what files will be copied.
 .PARAMETER Fast
-    TBC
+    Used to achieve a 'Fast' completion by skipping hash-checking of existing files, or after completed transfers.
 .EXAMPLE
-    TBC - Example of how to use this cmdlet
+    Invoke-FileMirror -Path ".\Source" -Destination ".\Destination" -Log ".\Example.log"
+
+    Copies the contents of the 'Source' folder to the 'Destination' folder and logs the operation to the 'Example.log' file. This includes a hash-checking.
+.EXAMPLE
+    Invoke-FileMirror -Path ".\Source" -Destination ".\FastDestination" -Log ".\FastExample.log" -Fast
+
+    Copies the contents of the 'Source' folder to the 'FastDestination' folder and logs the operation to the 'FastExample.log' file. This does not include hash-checking.
 .INPUTS
     Strings
 .OUTPUTS
     PSCustomObject
 .NOTES
-    Version 0.1.0
+    Version 0.1.3
 #>
     [CmdletBinding(ConfirmImpact = 'Medium', SupportsShouldProcess = $True)]
     param
