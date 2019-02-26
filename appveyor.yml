@@ -1,0 +1,13 @@
+# Using RamblingCookieMonster's Invoke-Parallel examples:
+# https://ramblingcookiemonster.github.io/GitHub-Pester-AppVeyor/
+# https://github.com/RamblingCookieMonster/Invoke-Parallel/blob/master/appveyor.yml
+skip_commits:
+  message: "(Add(ed)?|Update(d)?) readme"
+
+install:
+  - cinst pester -y
+
+build: false
+
+test_script:
+  ps: $Results = Invoke-Pester -Path ".\Tests\" -OutputFormat NUnitXml -OutputFile TestResults.xml -PassThru
