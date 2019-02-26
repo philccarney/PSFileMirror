@@ -10,4 +10,4 @@ install:
 build: false
 
 test_script:
-  ps: $Results = Invoke-Pester -Path ".\Tests\" -OutputFormat NUnitXml -OutputFile TestResults.xml -PassThru
+  pwsh: $Results = Invoke-Pester -Path ".\Tests\" -OutputFormat NUnitXml -OutputFile TestResults.xml -PassThru
