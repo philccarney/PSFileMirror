@@ -10,4 +10,4 @@ test_script:
   - pwsh: Find-Module -Name Pester -Repository PSGallery | Install-Module
   - pwsh: $Results = Invoke-Pester -Path ".\Tests\" -OutputFormat NUnitXml -OutputFile TestResults.xml -PassThru
   - pwsh: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Get-Item -Path ".\TestResults.xml" | Select-Object -ExpandProperty FullName))
-  - pwsh: if ($Results.FailedCount -gt 0) { throw "$($Results.FailedCount test(s) failed." }
+  - pwsh: if ($Results.FailedCount -gt 0) { throw "$($Results.FailedCount) test(s) failed." }
