@@ -12,4 +12,5 @@ build: false
 test_script:
   # pwsh doesn't seem automatically pick up the cinst module (presumably) as it installs in C:\Program Files\WindowsPowershell\Modules
   - pwsh: Get-ChildItem -Path "C:\Program Files\WindowsPowerShell\Modules\Pester\" -Recurse -File | Where-Object Name -match "Pester.psd1" |  Select-Object -ExpandProperty FullName | Sort-Object -Descending | Select-Object -First 1  | Import-Module
+  - pwsh: Get-Module -List | Select-Object Name, Version, Path # For troubleshooting
   - pwsh: $Results = Invoke-Pester -Path ".\Tests\" -OutputFormat NUnitXml -OutputFile TestResults.xml -PassThru
