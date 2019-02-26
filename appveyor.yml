@@ -7,7 +7,7 @@ skip_commits:
 build: false
 
 install:
-  - pwsh: Find-Module -Name Pester -Repository PSGallery | Install-Module
+  - pwsh: Install-Module "Pester" -Repository "PSGallery"
 
 test_script:
   - pwsh: $Results = Invoke-Pester -Path ".\Tests\" -OutputFormat NUnitXml -OutputFile TestResults.xml -PassThru
