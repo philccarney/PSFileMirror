@@ -102,10 +102,15 @@ function Invoke-FileMirror
                         Write-Verbose -Message "Processing '$($File.FullName)'."
                         $ProposedPath = Get-ProposedPath -Path $File.FullName -Source $Path -Destination $Destination
                         Write-Verbose -Message "Proposed path: $ProposedPath"
-                        $ProposedParentDirectory = Split-Path -Path $ProposedPath -Parent
                         if (Test-Path -LiteralPath $ProposedPath)
                         {
+                            Write-Verbose -Message "Proposed path already exists."
                             $FileExistsInDestination = $True
+                        }
+                        else
+                        {
+                            Write-Verbose -Message "Proposed path does not exist yet."
+                            $FileExistsInDestination = $False # Added otherwise it remains set after the first True instance.
                         }
                     }
                     catch
@@ -115,8 +120,10 @@ function Invoke-FileMirror
                     }
                 }
 
-                if ($PSCmdlet.ShouldProcess($File.FullName, "Validating destination folder"))
+                if ($PSCmdlet.ShouldProcess($File.FullName, "Ensuring destination folder"))
                 {
+                    $ProposedParentDirectory = Split-Path -Path $ProposedPath -Parent
+                    Write-Verbose -Message "Proposed parent directory: $ProposedParentDirectory"
                     try
                     {
                         if (-not (Test-Path -LiteralPath $ProposedParentDirectory))
@@ -137,7 +144,6 @@ function Invoke-FileMirror
                         Break
                     }
                 }
-
 
                 if ($Fast)
                 {
