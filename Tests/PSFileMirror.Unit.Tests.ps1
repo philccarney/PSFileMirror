@@ -1,5 +1,5 @@
-$ModuleName = $(Split-Path -Path $PSScriptRoot) -split "\\" | Select-Object -Last 1
-$ModuleManifestPath = Join-Path -Path $(Split-Path -Path $PSScriptRoot) -ChildPath "$ModuleName.psd1"
+$ModuleName = (Split-Path -Path $PSScriptRoot) -split "\\" | Select-Object -Last 1
+$ModuleManifestPath = Join-Path -Path (Split-Path -Path $PSScriptRoot) -ChildPath "$ModuleName.psd1"
 
 if (Get-Module -Name $ModuleName)
 {
