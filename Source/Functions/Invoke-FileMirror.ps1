@@ -174,21 +174,9 @@ function Invoke-FileMirror
                         {
                             try
                             {
-                                # If Fast isn't specified, we need to consider hashes, so we'll gather them before we do anything else.
-                                $HashSplat = @{
-                                    Algorithm   = "SHA256"
-                                    ErrorAction = "Stop"
-                                }
-
-                                $OriginalFileHash = Get-FileHash @HashSplat -Path $File |
-                                    Select-Object -ExpandProperty "Hash"
-
-                                $DestinationFileHash = Get-FileHash @HashSplat -Path $ProposedPath |
-                                    Select-Object -ExpandProperty "Hash"
-
-                                if ($DestinationFileHash -ne $OriginalFileHash)
+                                if (-not (Test-FileHashesMatch -ReferencePath $File.FullName -DifferencePath $ProposedPath))
                                 {
-                                    Write-Verbose -Message "Hash mismatch: $OriginalFileHash/$DestinationFileHash"
+                                    Write-Verbose -Message "Hash mismatch. File should be copied."
                                     $FileShouldBeCopied = $True
                                 }
                                 else
@@ -222,8 +210,7 @@ function Invoke-FileMirror
 
                             Copy-Item @CopySplat
 
-                            if ((-not ($Fast)) -and
-                                ((Get-FileHash -Path $File -Algorithm "SHA256").Hash -eq (Get-FileHash -Path $ProposedPath -Algorithm "SHA256").Hash))
+                            if ((-not ($Fast)) -and (Test-FileHashesMatch -ReferencePath $File.FullName -DifferencePath $ProposedPath))
                             {
                                 Write-Verbose -Message "Copy completed successfully. Hashes match."
                                 $FilesTransferred ++
@@ -232,7 +219,7 @@ function Invoke-FileMirror
                             {
                                 if (-not ($Fast)) # This *should* capture conditions which are NotFast but failed the comparison - without rerunning it.
                                 {
-                                    $Message = "Hash comparison failed for '$File'/'$ProposedPath'"
+                                    $Message = "Hash comparison failed for '$($File.FullName)'/'$ProposedPath'"
                                     Write-Warning -Message $Message
                                     Add-LogEntry -Message $Message -Log $Log
                                 }
