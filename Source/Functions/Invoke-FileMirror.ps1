@@ -27,8 +27,6 @@ function Invoke-FileMirror
     Strings
 .OUTPUTS
     PSCustomObject
-.NOTES
-    Version 0.1.3
 #>
     [CmdletBinding(ConfirmImpact = 'Medium', SupportsShouldProcess = $True)]
     param
