@@ -65,7 +65,7 @@ InModuleScope -ModuleName "PSFileMirror" {
         }
     }
 
-    Describe "Unit tests for 'Test-FileHash" -Tag "Build" {
+    Describe "Unit tests for 'Test-FileHashesMatch'" -Tag "Build" {
 
         Context "Input" {
 
