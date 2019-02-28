@@ -64,4 +64,71 @@ InModuleScope -ModuleName "PSFileMirror" {
             }
         }
     }
+
+    Describe "Unit tests for 'Test-FileHash" -Tag "Build" {
+
+        Context "Input" {
+
+            BeforeAll {
+
+                "Test file 1" | Set-Content -Path "TestDrive:\File1.txt"
+                "Test file 2" | Set-Content -Path "TestDrive:\File2.txt"
+            }
+
+            It "Should not throw with named parameters" {
+
+                { Test-FileHashesMatch -ReferencePath "TestDrive:\File1.txt" -DifferencePath "TestDrive:\File2.txt" } | Should -Not -Throw
+            }
+
+            It "Should throw with incorrect parameters" {
+
+                { Test-FileHashesMatch -File1 "TestDrive:\File1.txt" -File2 "TestDrive:\File2.txt" } | Should -Throw
+            }
+        }
+
+        Context "Execution" {
+
+            BeforeAll {
+
+                "Test file 1" | Set-Content -Path "TestDrive:\File1.txt"
+                "Test file 2" | Set-Content -Path "TestDrive:\File2.txt"
+                $Execution1 = Test-FileHashesMatch -ReferencePath "TestDrive:\File1.txt" -DifferencePath "TestDrive:\File1.txt"
+                $Execution2 = Test-FileHashesMatch -ReferencePath "TestDrive:\File1.txt" -DifferencePath "TestDrive:\File2.txt"
+            }
+
+            It "Should return `$True for identical hashes" {
+
+                $Execution1 | Should -Be $True
+            }
+
+            It "Should return `$False for mismatched hashes" {
+
+                $Execution2 | Should -Be $False
+            }
+        }
+
+        Context "Output" {
+
+            BeforeAll {
+
+                "Test file 1" | Set-Content -Path "TestDrive:\File1.txt"
+                "Test file 2" | Set-Content -Path "TestDrive:\File2.txt"
+                $Output1 = Test-FileHashesMatch -ReferencePath "TestDrive:\File1.txt" -DifferencePath "TestDrive:\File1.txt"
+                $Output2 = Test-FileHashesMatch -ReferencePath "TestDrive:\File1.txt" -DifferencePath "TestDrive:\File2.txt"
+            }
+
+            It "Should output a boolean" {
+
+                $Output1.GetType().Name | Should -Be "Boolean"
+                $Output2.GetType().Name | Should -Be "Boolean"
+            }
+
+            It "Should output one object" {
+
+                $Output1.Count | Should -Be 1
+                $Output2.Count | Should -Be 1
+            }
+
+        }
+    }
 }
