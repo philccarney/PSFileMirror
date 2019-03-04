@@ -2,7 +2,7 @@
 # https://ramblingcookiemonster.github.io/GitHub-Pester-AppVeyor/
 # https://github.com/RamblingCookieMonster/Invoke-Parallel/blob/master/appveyor.yml
 skip_commits:
-  message: "(Add(ed)?|Update(d)?) readme"
+  message: "([A|a]dd(ed)?|[U|u]pdate(d)?) ([R|r]eadme|[L|l]icense)" # I'll figure out the case-insensitive flag eventually.
 
 build: false
 
