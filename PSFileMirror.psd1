@@ -4,7 +4,7 @@
 # Generated on: 05/12/2018
 
 @{
-    ModuleVersion     = '0.1.5'
+    ModuleVersion     = '0.1.6'
     RootModule        = "PSFileMirror.psm1"
     GUID              = '60bd8597-e3ef-4c9c-9467-55bfa5a3ee80'
     Author            = 'Phil Carney'
