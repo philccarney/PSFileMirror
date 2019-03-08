@@ -19,6 +19,7 @@ function Get-ProposedPath
     String
 #>
     [CmdletBinding(ConfirmImpact = 'Low')]
+    [OutputType([String])]
     param
     (
         [Parameter(Mandatory = $True, Position = 0, HelpMessage = "The file to be processed")]
