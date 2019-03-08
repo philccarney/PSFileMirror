@@ -19,6 +19,7 @@ function Test-FileHashesMatch
     Boolean
 #>
     [CmdletBinding(ConfirmImpact = "Low")]
+    [OutputType([System.Boolean])]
     param
     (
         [Parameter(Mandatory = $True, HelpMessage = "The path to the first file in the comparison")]
