@@ -5,6 +5,7 @@
         "*.ps1xml": "powershell"
     },
     "files.defaultLanguage": "powershell",
+    "files.trimTrailingWhitespace": true,
     "powershell.codeFormatting.preset": "Allman",
     "powershell.codeFormatting.alignPropertyValuePairs": true,
     "powershell.codeFormatting.autoCorrectAliases": true,
