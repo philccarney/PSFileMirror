@@ -42,8 +42,8 @@ function Invoke-FileMirror
         [Parameter(Mandatory = $False, Position = 2, HelpMessage = "The path to the file used to log the file operation(s)")]
         [string] $Log,
 
-        <# [Parameter(Mandatory = $False, Position = 3, HelpMessage = "The extensions(s) which will be copied. The syntax for this is the same as Get-ChildItem's 'Include' parameter.")]
-        [string[]] $Extension, #>
+        [Parameter(Mandatory = $False, Position = 3, HelpMessage = "The extensions(s) which will be copied - e.g. 'ps1' or 'ps1', 'md', 'yml")]
+        [string[]] $Extension,
 
         [Parameter(Mandatory = $False, Position = 4, HelpMessage = "Indicates that hash-checking will be skipped for a 'Fast' completion")]
         [switch] $Fast
@@ -71,7 +71,30 @@ function Invoke-FileMirror
         Write-Verbose -Message "Scraping for files."
         if ($Extension)
         {
-            $Files = Get-ChildItem @DirSplat -Include $Extension
+            # I've always found the native syntax for Include in Get-ChildItem to be at best frustrating.
+            # Rather than expecting everybody to know and remember to add a wildcard and dot, it seems
+            # sensible to me to try and make it easier to use as an end-user and think ahead to
+            # try and smooth some of the edges.
+            $ParsedExtensions = forEach ($ExtensionToParse in $Extension)
+            {
+                if ($ExtensionToParse -notmatch "^(\*\.)")
+                # If the extension doesn't start with '*.'
+                {
+                    ("*." + $ExtensionToParse.ToLower()) -replace "\.\.", "."
+                }
+                elseif ($ExtensionToParse -match "^\*(\d|\w)+")
+                # If the extension starts has an asterisk but skips the dot
+                {
+                    ("*." + $ExtensionToParse.ToLower()) -replace "\*\*", "*"
+                }
+                else
+                {
+                    Write-Warning -Message "Unable to process '$ExtensionToParse' as valid extension."
+                }
+            }
+
+            Write-Verbose -Message "Searching for specific file extensions: '$($ParsedExtensions -join ", ")'"
+            $Files = Get-ChildItem @DirSplat -Include $ParsedExtensions
         }
         else
         {
