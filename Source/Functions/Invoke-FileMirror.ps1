@@ -1,34 +1,36 @@
 function Invoke-FileMirror
 {
     <#
-.SYNOPSIS
-    Provides a simple file/directory mirroring solution in Powershell Core.
-.DESCRIPTION
-    Uses Powershell Core cmdlets to provide a simple file/directory mirroring solution including SHA256 hash-checking.
-.PARAMETER Path
-    The path to the file(s) or folder(s) to be copied.
-.PARAMETER Destination
-    The path to the destination of the copy operation. The file structure is kept intact.
-.PARAMETER Log
-    The path to the log file - this logs the file operation(s).
-.PARAMETER Extension
-    Used to specify what files will be copied.
-.PARAMETER Fast
-    Used to achieve a 'Fast' completion by skipping hash-checking of existing files, or after completed transfers.
-.EXAMPLE
-    Invoke-FileMirror -Path ".\Source" -Destination ".\Destination" -Log ".\Example.log"
+    .SYNOPSIS
+        Provides a simple file/directory mirroring solution in Powershell Core.
+    .DESCRIPTION
+        Uses Powershell Core cmdlets to provide a simple file/directory mirroring solution including SHA256 hash-checking.
+    .PARAMETER Path
+        The path to the file(s) or folder(s) to be copied.
+    .PARAMETER Destination
+        The path to the destination of the copy operation. The file structure is kept intact.
+    .PARAMETER Log
+        The path to the log file - this logs the file operation(s).
+    .PARAMETER Extension
+        Used to specify what files will be copied.
+    .PARAMETER Fast
+        Used to achieve a 'Fast' completion by skipping hash-checking of existing files, or after completed transfers.
+    .EXAMPLE
+        Invoke-FileMirror -Path ".\Source" -Destination ".\Destination" -Log ".\Example.log"
 
-    Copies the contents of the 'Source' folder to the 'Destination' folder and logs the operation to the 'Example.log' file. This includes a hash-checking.
-.EXAMPLE
-    Invoke-FileMirror -Path ".\Source" -Destination ".\FastDestination" -Log ".\FastExample.log" -Fast
+        Copies the contents of the 'Source' folder to the 'Destination' folder and logs the operation to the 'Example.log' file. This includes a hash-checking.
+    .EXAMPLE
+        Invoke-FileMirror -Path ".\Source" -Destination ".\FastDestination" -Log ".\FastExample.log" -Fast
 
-    Copies the contents of the 'Source' folder to the 'FastDestination' folder and logs the operation to the 'FastExample.log' file. This does not include hash-checking.
-.INPUTS
-    Strings
-.OUTPUTS
-    PSCustomObject
-#>
+        Copies the contents of the 'Source' folder to the 'FastDestination' folder and logs the operation to the 'FastExample.log' file. This does not include hash-checking.
+    .INPUTS
+        Strings
+    .OUTPUTS
+        PSCustomObject
+    #>
     [CmdletBinding(ConfirmImpact = 'Medium', SupportsShouldProcess = $True)]
+    [Alias()]
+    [OutputType([PSCustomObject])]
     param
     (
         [Parameter(Mandatory = $True, Position = 0, HelpMessage = "The path to the file(s) to be copied")]
