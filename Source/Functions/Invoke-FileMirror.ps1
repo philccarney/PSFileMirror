@@ -118,7 +118,6 @@ function Invoke-FileMirror
                     catch
                     {
                         $PSCmdlet.ThrowTerminatingError($_)
-                        Break
                     }
                 }
 
@@ -143,7 +142,6 @@ function Invoke-FileMirror
                     catch
                     {
                         $PSCmdlet.ThrowTerminatingError($_)
-                        Break
                     }
                 }
 
@@ -164,7 +162,6 @@ function Invoke-FileMirror
                         catch
                         {
                             $PSCmdlet.ThrowTerminatingError($_)
-                            Break
                         }
                         finally
                         {
@@ -193,7 +190,6 @@ function Invoke-FileMirror
                             catch
                             {
                                 $PSCmdlet.ThrowTerminatingError($_)
-                                Break
                             }
                         }
                     }
@@ -293,7 +289,6 @@ function Invoke-FileMirror
             catch
             {
                 $PSCmdlet.ThrowTerminatingError($_)
-                Break
             }
         }
     }
