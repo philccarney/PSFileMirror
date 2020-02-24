@@ -212,7 +212,8 @@ function Invoke-FileMirror
 
                             Copy-Item @CopySplat
 
-                            if ((-not ($Fast)) -and (Test-FileHashesMatch -ReferencePath $File.FullName -DifferencePath $ProposedPath))
+                            if ((-not ($Fast)) -and
+                                (Test-FileHashesMatch -ReferencePath $File.FullName -DifferencePath $ProposedPath))
                             {
                                 Write-Verbose -Message "Copy completed successfully. Hashes match."
                                 $FilesTransferred ++
