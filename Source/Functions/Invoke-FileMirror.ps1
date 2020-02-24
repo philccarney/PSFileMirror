@@ -137,7 +137,7 @@ function Invoke-FileMirror
                                 ErrorAction = "Stop"
                             }
 
-                            New-Item @ParentDirSplat | Out-Null
+                            [void] (New-Item @ParentDirSplat)
                         }
                     }
                     catch
