@@ -40,7 +40,7 @@ function Invoke-FileMirror
         [string] $Destination,
 
         [Parameter(Mandatory = $False, Position = 2, HelpMessage = "The path to the file used to log the file operation(s)")]
-        [string] $Log,
+        [string] $Log = ".\PSFileMirror.log",
 
         [Parameter(Mandatory = $False, Position = 3, HelpMessage = "The extensions(s) which will be copied - e.g. 'ps1' or 'ps1', 'md', 'yml")]
         [string[]] $Extension,
@@ -61,6 +61,10 @@ function Invoke-FileMirror
         $StartTime = Get-Date
         Add-LogEntry -Message "PSFileMirror started." -Log $Log
 
+        Write-Verbose -Message "Resolving full paths from provided paths."
+        $Path = Resolve-Path -Path $Path -ErrorAction "Stop"
+        $Destination = Resolve-Path -Path $Destination -ErrorAction "Stop"
+
         Write-Verbose -Message "Setting file collection parameters."
         $DirSplat = @{
             Path    = $Path
@@ -68,36 +72,35 @@ function Invoke-FileMirror
             Recurse = $True
         }
 
-        Write-Verbose -Message "Scraping for files."
         if ($Extension)
         {
             # I've always found the native syntax for Include in Get-ChildItem to be at best frustrating.
             # Rather than expecting everybody to know and remember to add a wildcard and dot, it seems
             # sensible to me to try and make it easier to use as an end-user and think ahead to
             # try and smooth some of the edges.
-            $ParsedExtensions = forEach ($ExtensionToParse in $Extension)
+            try
             {
-                if ($ExtensionToParse -notmatch "^(\*\.)")
-                # If the extension doesn't start with '*.'
-                {
-                    ("*." + $ExtensionToParse.ToLower()) -replace "\.\.", "."
-                }
-                elseif ($ExtensionToParse -match "^\*(\d|\w)+")
-                # If the extension starts has an asterisk but skips the dot
-                {
-                    ("*." + $ExtensionToParse.ToLower()) -replace "\*\*", "*"
-                }
-                else
-                {
-                    Write-Warning -Message "Unable to process '$ExtensionToParse' as valid extension."
-                }
+                $ParsedExtensions = @(Format-FileExtension -InputObject $Extension -ErrorAction "Stop")
+            }
+            catch
+            {
+                $PSCmdlet.ThrowTerminatingError($_)
             }
 
-            Write-Verbose -Message "Searching for specific file extensions: '$($ParsedExtensions -join ", ")'"
+            if ($ParsedExtensions)
+            {
+                Write-Verbose -Message "Searching for following extensions: '$($ParsedExtensions -join ", ")'"
+            }
+            else
+            {
+                Write-Verbose -Message "No file extensions specified, searching for any/all files."
+            }
+            Write-Verbose -Message "Scraping for files."
             $Files = Get-ChildItem @DirSplat -Include $ParsedExtensions
         }
         else
         {
+            Write-Verbose -Message "Scraping for files."
             $Files = Get-ChildItem @DirSplat
         }
 
@@ -178,7 +181,7 @@ function Invoke-FileMirror
                             if ($FileExistsInDestination)
                             {
                                 # If Fast is specified, we don't care about checking hashes etc; only the existence of the file matters.
-                                Write-Verbose "File already exists in destination. No further action required."
+                                Write-Debug "File already exists in destination. No further action required."
                                 Continue
                             }
                         }
@@ -202,12 +205,12 @@ function Invoke-FileMirror
                             {
                                 if (-not (Test-FileHashesMatch -ReferencePath $File.FullName -DifferencePath $ProposedPath))
                                 {
-                                    Write-Verbose -Message "Hash mismatch. File should be copied."
+                                    Write-Debug -Message "Hash mismatch. File should be copied."
                                     $FileShouldBeCopied = $True
                                 }
                                 else
                                 {
-                                    Write-Verbose -Message "Hashes match."
+                                    Write-Debug -Message "Hashes match."
                                 }
                             }
                             catch
@@ -238,7 +241,7 @@ function Invoke-FileMirror
                             if ((-not ($Fast)) -and
                                 (Test-FileHashesMatch -ReferencePath $File.FullName -DifferencePath $ProposedPath))
                             {
-                                Write-Verbose -Message "Copy completed successfully. Hashes match."
+                                Write-Debug -Message "Copy completed successfully. Hashes match."
                                 $FilesTransferred ++
                             }
                             else
