@@ -18,11 +18,11 @@ function Test-FileHashesMatch
     .OUTPUTS
         Boolean
     #>
-    [CmdletBinding(ConfirmImpact = "Low")]
+    [CmdletBinding(ConfirmImpact = "Low", SupportsShouldProcess = $False)]
     [OutputType([System.Boolean])]
     param
     (
-        [Parameter(Mandatory = $True, HelpMessage = "The path to the first file in the comparison")]
+        [Parameter(Mandatory = $True, Position = 0, HelpMessage = "The path to the first file in the comparison")]
         [ValidateScript( { if (Test-Path -Path $_ -PathType "Leaf")
                 {
                     $True
@@ -34,7 +34,7 @@ function Test-FileHashesMatch
             })]
         [string] $ReferencePath,
 
-        [Parameter(Mandatory = $True, HelpMessage = "The path to the second file in the comparison")]
+        [Parameter(Mandatory = $True, Position = 1, HelpMessage = "The path to the second file in the comparison")]
         [ValidateScript( { if (Test-Path -Path $_ -PathType "Leaf")
                 {
                     $True
