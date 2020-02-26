@@ -1,31 +1,49 @@
 function Test-FileHashesMatch
 {
     <#
-.SYNOPSIS
-    Retrieves SHA256 hashes for two files and provides True/False values after comparing them.
-.DESCRIPTION
-    Uses the Get-FileHash cmdlet to retrieve hashes for two files and provides True/False values after comparing them.
-.PARAMETER ReferencePath
-    The path to the first file in the comparison.
-.PARAMETER DifferencePath
-    The path to the second file in the comparison.
-.EXAMPLE
-    Test-FileHashesMatch -ReferencePath ".\File1.txt" -DifferencePath ".\File1.txt"
+    .SYNOPSIS
+        Retrieves SHA256 hashes for two files and provides True/False values after comparing them.
+    .DESCRIPTION
+        Uses the Get-FileHash cmdlet to retrieve hashes for two files and provides True/False values after comparing them.
+    .PARAMETER ReferencePath
+        The path to the first file in the comparison.
+    .PARAMETER DifferencePath
+        The path to the second file in the comparison.
+    .EXAMPLE
+        Test-FileHashesMatch -ReferencePath ".\File1.txt" -DifferencePath ".\File1.txt"
 
-    Returns True as the files are identical.
-.INPUTS
-    Strings
-.OUTPUTS
-    Boolean
-#>
+        Returns True as the files are identical.
+    .INPUTS
+        Strings
+    .OUTPUTS
+        Boolean
+    #>
     [CmdletBinding(ConfirmImpact = "Low")]
     [OutputType([System.Boolean])]
     param
     (
         [Parameter(Mandatory = $True, HelpMessage = "The path to the first file in the comparison")]
+        [ValidateScript( { if (Test-Path -Path $_ -PathType "Leaf")
+                {
+                    $True
+                }
+                else
+                {
+                    throw "Please provide the path to an existing, accessible file."
+                }
+            })]
         [string] $ReferencePath,
 
         [Parameter(Mandatory = $True, HelpMessage = "The path to the second file in the comparison")]
+        [ValidateScript( { if (Test-Path -Path $_ -PathType "Leaf")
+                {
+                    $True
+                }
+                else
+                {
+                    throw "Please provide the path to an existing, accessible file."
+                }
+            })]
         [string] $DifferencePath
     )
 
@@ -36,7 +54,7 @@ function Test-FileHashesMatch
 
     try
     {
-        Write-Verbose -Message "Retrieving hash for reference file ($ReferencePath)"
+        Write-Debug -Message "Retrieving hash for reference file ($ReferencePath)"
         $ReferenceHash = Get-FileHash -Path $ReferencePath @HashSplat
     }
     catch
@@ -46,7 +64,7 @@ function Test-FileHashesMatch
 
     try
     {
-        Write-Verbose -Message "Retrieving hash for difference file ($DifferencePath)"
+        Write-Debug -Message "Retrieving hash for difference file ($DifferencePath)"
         $DifferenceHash = Get-FileHash -Path $DifferencePath @HashSplat
     }
     catch
@@ -54,7 +72,7 @@ function Test-FileHashesMatch
         $PSCmdlet.ThrowTerminatingError($_)
     }
 
-    Write-Verbose -Message "Comparing hashes."
+    Write-Debug -Message "Comparing hashes."
     if ($DifferenceHash.Hash -eq $ReferenceHash.Hash)
     {
         $True
